@@ -271,3 +271,10 @@ PCE BASE Token 総量は Community Token 全体の裏付け価値であり、**A
 - その 1 点のうち、**コミュニティ間の公平性に関わる部分（日次ミント上限）のみをプロトコル全体で統一**する
 - 個人差や分配方法は Community の自治として残す
 - 結果: **プロトコル公平性とコミュニティ自由度を両立**する変更
+
+---
+
+## 関連リポジトリ
+
+- [peacecoin-protocol/core](https://github.com/peacecoin-protocol/core) — Solidity 実装
+- [peacecoin-protocol/PIPs](https://github.com/peacecoin-protocol/PIPs) — PEACE COIN Improvement Proposals
