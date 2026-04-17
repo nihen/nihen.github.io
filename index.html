@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nihen</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --fg-muted: #555;
+    --border: #e0e0e0;
+    --accent: #0366d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --fg: #e6edf3;
+      --fg-muted: #9da7b3;
+      --border: #30363d;
+      --accent: #58a6ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
+    font-size: 17px; line-height: 1.8;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: 740px; margin: 0 auto; padding: 40px 20px 80px; }
+  h1 { font-size: 1.8em; margin-top: 0; padding-bottom: 0.3em; border-bottom: 2px solid var(--border); }
+  h2 { font-size: 1.3em; margin-top: 1.8em; padding-bottom: 0.2em; border-bottom: 1px solid var(--border); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul { padding-left: 1.5em; }
+  li { margin: 0.4em 0; }
+  .meta { color: var(--fg-muted); font-size: 0.9em; }
+  @media (max-width: 600px) {
+    html, body { font-size: 16px; }
+    main { padding: 24px 14px 60px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>nihen</h1>
+  <p class="meta">個人ページ — PCE プロトコル関連のガバナンス提案・ドラフトを置く場所。</p>
+
+  <h2>提案</h2>
+  <ul>
+    <li>
+      <a href="proposals/arigato-neutrality/">ARIGATO CREATION のコミュニティ間中立化</a>
+      <div class="meta">ガバナンス投票者向けの提案ドラフト</div>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
