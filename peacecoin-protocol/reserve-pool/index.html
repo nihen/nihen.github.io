@@ -166,8 +166,10 @@ PCE は毎週 0.2% 減衰する（年間約 10%）ため、1 claim あたりの 
 
 本質は「物理的なプール化」ではなく **会計チェックの撤廃**。前述のとおり PCE は既に PCEToken コントラクトの単一 ERC20 残高として物理的に集約されている。本提案で変えるのは:
 
-- swap-back の可否判定を、コミュニティ別の会計 (`depositedPCEToken[community]`) から、**コントラクト全体の PCE 残高 (`balanceOf(address(this))`)** に切り替える
-- コミュニティ別の増減計算は維持しない（書き込みを止め、情報的役割のみに縮退させる）
+- swap-back の可否判定を、コミュニティ別の会計 (`localTokens[community].depositedPCEToken`) から、**コントラクト全体の PCE 残高 (`balanceOf(address(this))`)** に切り替える
+- コミュニティ別の増減計算（減算・加算・初期値の全書き込み）を停止し、フィールドを**移行時点のスナップショットとして凍結**する
+
+`balanceOf(address(this))` 基準にすると、プロトコル外から PCEToken アドレスへ直接 PCE を送金した場合もプール残高としてカウントされる。これはガバナンスやプロトコル収益からの**補填フローを公式に組み込める**という副作用になる（本提案で意図する挙動）。
 
 ### 5.2 コミュニティ間 swap の簡素化
 
@@ -206,7 +208,7 @@ PCE は毎週 0.2% 減衰する（年間約 10%）ため、1 claim あたりの 
 
 - swap-back の失敗条件が「個別コミュニティの準備金不足」から「グローバルプールの不足」に変わる
 - コミュニティ間 swap (`swapTokens`) が準備金の観点で単純化される
-- `depositedPCEToken[community]` は swap 成否判定から外れる（情報的な履歴として残すか廃止するかはガバナンス判断）
+- `localTokens[community].depositedPCEToken` は swap 成否判定から外れ、書き込みも停止してスナップショットとして凍結される
 
 ### 変わらないこと
 
@@ -218,20 +220,21 @@ PCE は毎週 0.2% 減衰する（年間約 10%）ため、1 claim あたりの 
 ### 実装面の留意点
 
 - **ストレージレイアウト**: `Utils.LocalToken` の `depositedPCEToken` フィールドは UUPS プロキシ互換性のため**物理削除不可**、残置必須
-- **Underflow 回避**: 現行の `localTokens[fromToken].depositedPCEToken -= pcetokenAmount` を放置すると低準備金コミュニティで revert する。本提案では当該減算を停止する（フィールドは残すが書き込みを止める）
-- **ABI 互換**: `getDepositedPCETokens()` など既存ゲッターは維持。意味は「歴史的累積」に変わる
+- **書き込み全停止**: `swapFromLocalToken` の `-=`、`swapToLocalToken` の `+=`、`createToken` の初期値設定を**すべて停止**。Underflow revert の回避と「片方向の会計」になるのを防ぐ
+- **ABI 互換**: `getDepositedPCETokens()` など既存ゲッターは維持。返す値は「移行時点の凍結スナップショット」になる
 
 ---
 
 ## 7. ガバナンスで決めるべきこと
 
-1. **既存 `depositedPCEToken[community]` の扱い**
-   - 情報的な履歴として残すか、廃止するか
-2. **プール逼迫時のサーキットブレーカー**
+1. **プール逼迫時のサーキットブレーカー**
    - 残高が一定閾値を下回った時点で日次上限を自動的に引き下げる設計を入れるか
    - ガバナンス介入を発動する閾値
-3. **プール補填の公式フロー**
+2. **プール補填の公式フロー**
    - プロトコル収益や外部流動性提供からの PCE 注入を公式オペレーションに組み込むか
+3. **Setter の同時追加**
+   - 現行 `swapableToPCERate` / `swapableToPCEIndividualRate` には setter が無い
+   - 本提案のアップグレードに合わせ setter（＋イベント）追加を推奨。サーキットブレーカー機動性のため必須
 4. **日次 swap 上限の扱い**
    - 現状はコミュニティ単位。プロトコル全体スロットリングを導入するか、別 PIP で扱うか
 5. **テスト観点**
