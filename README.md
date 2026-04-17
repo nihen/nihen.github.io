@@ -1,5 +1,5 @@
 # nihen.github.io
 
-Personal GitHub Pages — governance proposals and drafts.
+Personal GitHub Pages.
 
 - [PCE Protocol](peacecoin-protocol/)
